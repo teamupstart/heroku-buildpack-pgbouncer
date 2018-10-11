@@ -141,6 +141,13 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
 - `PGBOUNCER_QUERY_WAIT_TIMEOUT` Default is 120 seconds, helps when the server is down or the database rejects connections for any reason. If this is disabled, clients will be queued infinitely.
 
+### Upstart modifications
+
+- `PGBOUNCER_SSLMODE` default is `prefer`, corresponds to `server_tls_sslmode` config variable
+- `PGBOUNCER_SERVER_CAFILE`  CA certificate
+- `PGBOUNCER_SERVER_CERTFILE`  client certificate
+- `PGBOUNCER_SERVER_KEYFILE`  client certificate key
+
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Using the edge version of the buildpack

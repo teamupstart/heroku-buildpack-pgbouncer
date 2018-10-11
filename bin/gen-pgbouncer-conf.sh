@@ -11,13 +11,16 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
   SERVER_RESET_QUERY="DISCARD ALL;"
 fi
 
-cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+INI=/app/vendor/pgbouncer/pgbouncer.ini
+SSLINI=/app/vendor/pgbouncer/ssl.ini
+
+cat >> $INI << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
-server_tls_sslmode = prefer
+server_tls_sslmode = ${PGBOUNCER_SSLMODE:-prefer}
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
@@ -40,9 +43,13 @@ log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETERS}
 query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
-
-[databases]
 EOFEOF
+
+if [ -f $SSLINI ]; then
+    cat $SSLINI >> $INI
+fi
+
+echo "[databases]" >> $INI
 
 for POSTGRES_URL in $POSTGRES_URLS
 do
@@ -66,7 +73,7 @@ do
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
-  cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+  cat >> $INI << EOFEOF
 $CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT
 EOFEOF
 
@@ -74,3 +81,4 @@ EOFEOF
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
+

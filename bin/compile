@@ -79,13 +79,13 @@ if [ -f $ENV_DIR/PGBOUNCER_SERVER_CAFILE ]; then
     cp $ENV_DIR/PGBOUNCER_SERVER_CAFILE $SSLDIR/ca.crt
     echo "server_tls_ca_file = /app/$VENDORED_PGBOUNCER/ssl/ca.crt" >> $SSLINI
 fi
-if [ -f $ENV_DIR/PGBOUNCER_SERVER_CERTFILE]; then
+if [ -f $ENV_DIR/PGBOUNCER_SERVER_CERTFILE ]; then
     echo "-----> SSL: Moving the server certificate file into app/vendor/pgbouncer/ssl"
     mkdir -p $SSLDIR
     cp $ENV_DIR/PGBOUNCER_SERVER_CERTFILE $SSLDIR/client.crt
     echo "server_tls_cert_file = /app/$VENDORED_PGBOUNCER/ssl/client.crt" >> $SSLINI
 fi
-if [ -f $ENV_DIR/PGBOUNCER_SERVER_KEYFILE]; then
+if [ -f $ENV_DIR/PGBOUNCER_SERVER_KEYFILE ]; then
     echo "-----> SSL: Moving the server certificate key file into app/vendor/pgbouncer/ssl"
     mkdir -p $SSLDIR
     cp $ENV_DIR/PGBOUNCER_SERVER_KEYFILE $SSLDIR/client.key

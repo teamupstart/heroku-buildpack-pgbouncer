@@ -54,30 +54,29 @@ echo "[databases]" >> $INI
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
-  IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
+  # skip not defined variables
+  if [ "x$POSTGRES_URL_VALUE" != "x" ]; then
+      IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
 
-  DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+      DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
-  CLIENT_DB_NAME="db${n}"
+      CLIENT_DB_NAME="db${n}"
 
-  echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
+      echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
 
-  if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
-  then
-    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME?prepared_statements=false
-  else
-    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
+      if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
+      then
+        export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME?prepared_statements=false
+      else
+        export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
+      fi
+
+      echo "\"$DB_USER\" \"$DB_MD5_PASS\"" >> /app/vendor/pgbouncer/users.txt
+
+      echo "$CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT" >> $INI
+
+      let "n += 1"
   fi
-
-  cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_MD5_PASS"
-EOFEOF
-
-  cat >> $INI << EOFEOF
-$CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT
-EOFEOF
-
-  let "n += 1"
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*

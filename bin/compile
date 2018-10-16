@@ -90,7 +90,7 @@ if [ -f $ENV_DIR/PGBOUNCER_SERVER_KEYFILE ]; then
     mkdir -p $SSLDIR
     cp $ENV_DIR/PGBOUNCER_SERVER_KEYFILE $SSLDIR/client.key
     echo "server_tls_key_file = /app/$VENDORED_PGBOUNCER/ssl/client.key" >> $SSLINI
-    chmod 600 /app/$VENDORED_PGBOUNCER/ssl/client.key
+    chmod 600 $SSLDIR/client.key
 fi
 
 echo "-----> pgbouncer done"

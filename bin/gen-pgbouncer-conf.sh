@@ -58,9 +58,9 @@ do
   if [ "x$POSTGRES_URL_VALUE" != "x" ]; then
 
       # check if we have a replacement database url
-      eval REPLACE=\$${POSTGRES_URL_VALUE}_REPLACE
+      eval REPLACE=\$${POSTGRES_URL}_REPLACE
       if [ "x$REPLACE" != "x" ]; then
-        echo "pgbouncer: Replacing $POSTGRES_URL_VALUE with $REPLACE"
+        echo "pgbouncer: Replacing $POSTGRES_URL with $REPLACE"
         POSTGRES_URL_VALUE=$REPLACE
       fi
 

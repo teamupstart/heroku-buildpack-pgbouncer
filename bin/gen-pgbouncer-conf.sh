@@ -56,6 +56,14 @@ do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
   # skip not defined variables
   if [ "x$POSTGRES_URL_VALUE" != "x" ]; then
+
+      # check if we have a replacement database url
+      eval REPLACE=\$${POSTGRES_URL_VALUE}_REPLACE
+      if [ "x$REPLACE" != "x" ]; then
+        echo "pgbouncer: Replacing $POSTGRES_URL_VALUE with $REPLACE"
+        POSTGRES_URL_VALUE=$REPLACE
+      fi
+
       IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
 
       DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`

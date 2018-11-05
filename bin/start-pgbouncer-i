@@ -91,7 +91,7 @@ aux-start() {
     trap '' SIGTERM
 
     # Start child in the background.
-    "$@"
+    "$@" &
 
     # Translate SIGHUP to the appropriate signal to stop the child (anything
     # except SIGTERM which is ignored). This *will* cancel the wait and may
@@ -105,7 +105,7 @@ aux-start() {
     echo "$name" > "$psmgr"
 
     at "$name-end"
-  )
+  ) &
 
   pids[$name]=$!
   signals[$name]=$signal

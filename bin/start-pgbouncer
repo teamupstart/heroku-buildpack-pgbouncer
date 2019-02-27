@@ -9,7 +9,6 @@ main() {
 
   at pgbouncer-enabled
   run-pgbouncer "$@"
-  exit 0
 }
 
 run-pgbouncer() {
@@ -154,4 +153,4 @@ is-enabled() {
   )
 }
 
-[[ "$0" != "$BASH_SOURCE" ]] || main "$@"
+[[ "$0" != "$BASH_SOURCE" ]] || main "$@" || true 

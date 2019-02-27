@@ -9,6 +9,7 @@ main() {
 
   at pgbouncer-enabled
   run-pgbouncer "$@"
+  exit 0
 }
 
 run-pgbouncer() {

@@ -154,4 +154,4 @@ is-enabled() {
 }
 
 [[ "$0" != "$BASH_SOURCE" ]] || main "$@"
-exit 0
+wait

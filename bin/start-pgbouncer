@@ -153,4 +153,5 @@ is-enabled() {
   )
 }
 
-[[ "$0" != "$BASH_SOURCE" ]] || main "$@" || true 
+[[ "$0" != "$BASH_SOURCE" ]] || main "$@"
+exit 0
